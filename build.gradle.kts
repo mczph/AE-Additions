@@ -1,6 +1,5 @@
-import net.minecraftforge.gradle.userdev.UserDevExtension
-import com.matthewprenger.cursegradle.CurseExtension
 import net.minecraftforge.gradle.userdev.DependencyManagementExtension
+import net.minecraftforge.gradle.userdev.UserDevExtension
 import org.gradle.jvm.tasks.Jar
 
 buildscript {
@@ -8,14 +7,16 @@ buildscript {
         mavenCentral()
         maven(url = "https://maven.minecraftforge.net/")
         maven(url = "https://oss.sonatype.org/content/repositories/snapshots")
+        maven(url = "https://repo.spongepowered.org/maven")
     }
 
     dependencies {
-        classpath(group = "net.minecraftforge.gradle", name = "ForgeGradle", version = "4.1.+") {
+        classpath(group = "net.minecraftforge.gradle", name = "ForgeGradle", version = "5.0.+") {
             isChanging = true
         }
 
-        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.5.10")
+        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.6.10")
+        classpath("org.spongepowered:mixingradle:0.7.+")
     }
 }
 
@@ -28,6 +29,7 @@ apply {
     plugin("net.minecraftforge.gradle")
     plugin("kotlin")
     plugin("idea")
+    plugin("org.spongepowered.mixin")
 }
 
 // Properties
@@ -37,7 +39,7 @@ val mcpChannel: String by project
 val mcpMappings: String by project
 val forgeVersion: String by project
 val aeVersion: String by project
-val hwylaVersion: String by project
+val wthitVersion: String by project
 val jeiVersion: String by project
 val mekanismVersion: String by project
 val cofhVersion: String by project
@@ -88,7 +90,6 @@ configure<UserDevExtension> {
 repositories {
     jcenter()
     mavenCentral()
-    maven(url = "http://maven.shadowfacts.net/")
     maven {
         name = "Progwml6 maven"
         url = uri("https://dvs1.progwml6.com/files/maven/")
@@ -110,6 +111,10 @@ repositories {
         name = "kotlinforforge"
         url = uri("https://thedarkcolour.github.io/KotlinForForge/")
     }
+
+    maven {
+        url = uri("https://maven.bai.lol")
+    }
 }
 
 dependencies {
@@ -117,7 +122,7 @@ dependencies {
 
     implementation("org.jetbrains.kotlin:kotlin-reflect:$kotlinVersion")
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlinVersion")
-    implementation("thedarkcolour:kotlinforforge:1.14.0")
+    implementation("thedarkcolour:kotlinforforge:3.1.0")
 
     val jeiApi = project.dependencies.create(group = "mezz.jei", name = "jei-${minecraftVersion}", version = jeiVersion, classifier = "api")
     val jei = project.dependencies.create(group = "mezz.jei", name = "jei-${minecraftVersion}", version = jeiVersion)
@@ -129,8 +134,8 @@ dependencies {
     implementation(project.the<DependencyManagementExtension>().deobf(ae2))
 
     implementation(project.the<DependencyManagementExtension>().deobf("mekanism:Mekanism:${mekanismVersion}"))
-
-    implementation(project.the<DependencyManagementExtension>().deobf("curse.maven:hwyla-253449:${hwylaVersion}"))
+    
+    implementation(project.the<DependencyManagementExtension>().deobf("mcp.mobius.waila:wthit:forge-${wthitVersion}"))
 }
 
 val Project.minecraft: UserDevExtension
@@ -146,7 +151,7 @@ tasks.withType<Jar> {
     filesMatching("/mcmod.info") {
         expand(mapOf(
             "version" to project.version,
-            "mcversion" to "1.12.2"
+            "mcversion" to "1.18.2"
         ))
     }
 }
